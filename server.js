@@ -4,7 +4,10 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import chalk from 'chalk';
 import taskRoutes from './routes/taskRoutes.js';
-import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
 
 // Load environment variables
 dotenv.config();
@@ -16,6 +19,11 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Serve uploaded images
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Connect to DB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log(chalk.green('✅ MongoDB Connected')))
@@ -23,7 +31,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 
 // Routes
 app.use('/api/tasks', taskRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 // Start Server
 app.listen(PORT, () => console.log(chalk.blue(`🚀 Server running at http://localhost:${PORT}`)));
