@@ -1,13 +1,20 @@
 import express from 'express';
-import { getTasks, createTask, updateTask, deleteTask, getAssignedTasks } from '../controllers/taskController.js';
+import {
+  getTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+  getAssignedTasks,
+  getDeletedTasks
+} from '../controllers/taskController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Protected routes
-router.get('/', protect, getTasks); // Get tasks for the logged-in user
-router.post('/', protect, createTask); // Create task for logged-in user
-router.get('/assigned', protect, getAssignedTasks); // Get tasks assigned to me
+router.get('/', protect, getTasks);
+router.get('/assigned', protect, getAssignedTasks);
+router.get('/deleted', protect, getDeletedTasks);
+router.post('/', protect, createTask);
 router.put('/:id', protect, updateTask);
 router.delete('/:id', protect, deleteTask);
 

@@ -10,6 +10,7 @@ const taskSchema = new mongoose.Schema({
   tags: [String],
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // task assigned to another user
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // creator of the task
+  isDeleted: { type: Boolean, default: false }, // soft delete flag
   createdAt: { type: Date, default: Date.now }
 });
 

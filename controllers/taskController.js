@@ -5,7 +5,7 @@ import chalk from 'chalk';
 // @desc Get all tasks for logged-in user
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.user.id });
+    const tasks = await Task.find({ user: req.user.id, isDeleted: false });
     res.status(200).json(tasks);
   } catch (err) {
     console.error(chalk.red(err));
@@ -16,7 +16,7 @@ export const getTasks = async (req, res) => {
 // @desc Get tasks assigned to the logged-in user with creator info
 export const getAssignedTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ assignedTo: req.user.id })
+    const tasks = await Task.find({ assignedTo: req.user.id, isDeleted: false })
       .populate('user', 'name email avatar'); // populate task creator details
 
     res.status(200).json(tasks);
@@ -53,7 +53,7 @@ export const createTask = async (req, res) => {
 export const updateTask = async (req, res) => {
   try {
     const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, user: req.user.id }, // ensure user owns the task
+      { _id: req.params.id, user: req.user.id, isDeleted: false },
       req.body,
       { new: true }
     );
@@ -67,16 +67,31 @@ export const updateTask = async (req, res) => {
   }
 };
 
-// @desc Delete task
+// @desc Soft delete task
 export const deleteTask = async (req, res) => {
   try {
-    const task = await Task.findOneAndDelete({ _id: req.params.id, user: req.user.id });
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      { isDeleted: true },
+      { new: true }
+    );
 
     if (!task) return res.status(404).json({ error: 'Task Not Found or Unauthorized' });
 
-    res.status(204).send();
+    res.status(200).json({ message: 'Task moved to Recycle Bin' });
   } catch (err) {
     console.error(chalk.red(err));
     res.status(404).json({ error: 'Task Not Found' });
+  }
+};
+
+// @desc Get deleted tasks (Recycle Bin)
+export const getDeletedTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({ user: req.user.id, isDeleted: true });
+    res.status(200).json(tasks);
+  } catch (err) {
+    console.error(chalk.red(err));
+    res.status(500).json({ error: 'Server Error' });
   }
 };
