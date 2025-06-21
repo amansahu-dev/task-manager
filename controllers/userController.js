@@ -17,8 +17,10 @@ export const updateProfile = async (req, res) => {
       name: req.body.name,
       bio: req.body.bio,
     };
+
     if (req.file) {
-      updates.avatar = `/uploads/${req.file.filename}`;
+      const base64String = req.file.buffer.toString('base64');
+      updates.avatar = base64String;
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, updates, { new: true }).select('-password');

@@ -5,11 +5,7 @@ import { getProfile, updateProfile, getAllUsers } from '../controllers/userContr
 
 const router = express.Router();
 
-// Multer config for avatar upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
-});
+const storage = multer.memoryStorage(); // using memory storage for base64
 const upload = multer({ storage });
 
 router.get('/me', protect, getProfile);
