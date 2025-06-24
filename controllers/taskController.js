@@ -1,5 +1,7 @@
 import Task from '../models/Task.js';
-import { v4 as uuidv4 } from 'uuid';
+import Notification from '../models/Notification.js';
+import { sendNotification } from '../socket/socketHandler.js';
+import { io } from '../socket/socketInstance.js'; // 🔌 Custom io reference
 import chalk from 'chalk';
 
 export const getTasks = async (req, res) => {
@@ -99,6 +101,14 @@ export const createTask = async (req, res) => {
       user: req.user.id,
     });
 
+    if (assignedTo && assignedTo !== req.user.id) {
+      await Notification.create({
+        user: assignedTo,
+        message: `You have been assigned a new task: "${title}"`
+      });
+      sendNotification(io, assignedTo, `You have a new task: "${title}"`);
+    }
+    
     res.status(201).json(task);
   } catch (err) {
     console.error(chalk.red(err));
