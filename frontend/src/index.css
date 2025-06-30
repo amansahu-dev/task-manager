@@ -1,1 +1,235 @@
 @import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  /* Tailwind v4 dark mode support */
+  :root {
+    --color-scheme: light;
+    color-scheme: light;
+  }
+
+  :root[style*="--color-scheme: dark"],
+  .dark {
+    --color-scheme: dark;
+    color-scheme: dark;
+  }
+
+  /* Light mode defaults - Pure white backgrounds */
+  .bg-gray-50 {
+    background-color: #ffffff !important;
+  }
+
+  .bg-gray-100 {
+    background-color: #f8f9fa !important;
+  }
+
+  .bg-white {
+    background-color: #ffffff !important;
+  }
+
+  .text-gray-900 {
+    color: #000000 !important;
+  }
+
+  .text-gray-800 {
+    color: #1a1a1a !important;
+  }
+
+  .text-gray-700 {
+    color: #2d2d2d !important;
+  }
+
+  .text-gray-600 {
+    color: #4a4a4a !important;
+  }
+
+  .text-gray-500 {
+    color: #6b6b6b !important;
+  }
+
+  .text-gray-400 {
+    color: #8a8a8a !important;
+  }
+
+  .text-gray-300 {
+    color: #b0b0b0 !important;
+  }
+
+  .border-gray-200 {
+    border-color: #e0e0e0 !important;
+  }
+
+  .border-gray-300 {
+    border-color: #d0d0d0 !important;
+  }
+
+  /* Dark mode overrides - Pure dark backgrounds */
+  .dark body {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .dark .bg-gray-50 {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark .bg-gray-100 {
+    background-color: #2d2d2d !important;
+  }
+
+  .dark .bg-white {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark .bg-gray-700 {
+    background-color: #2d2d2d !important;
+  }
+
+  .dark .bg-gray-800 {
+    background-color: #1a1a1a !important;
+  }
+
+  .dark .bg-gray-900 {
+    background-color: #000000 !important;
+  }
+
+  .dark .text-gray-900 {
+    color: #ffffff !important;
+  }
+
+  .dark .text-gray-800 {
+    color: #f0f0f0 !important;
+  }
+
+  .dark .text-gray-700 {
+    color: #e0e0e0 !important;
+  }
+
+  .dark .text-gray-600 {
+    color: #d0d0d0 !important;
+  }
+
+  .dark .text-gray-500 {
+    color: #b0b0b0 !important;
+  }
+
+  .dark .text-gray-400 {
+    color: #a0a0a0 !important;
+  }
+
+  .dark .text-gray-300 {
+    color: #808080 !important;
+  }
+
+  .dark .border-gray-200 {
+    border-color: #404040 !important;
+  }
+
+  .dark .border-gray-300 {
+    border-color: #505050 !important;
+  }
+
+  .dark .border-gray-600 {
+    border-color: #505050 !important;
+  }
+
+  .dark .border-gray-700 {
+    border-color: #404040 !important;
+  }
+
+  /* Hover states for light mode */
+  .hover\:bg-gray-50:hover {
+    background-color: #f0f0f0 !important;
+  }
+
+  .hover\:bg-gray-100:hover {
+    background-color: #e8e8e8 !important;
+  }
+
+  .hover\:bg-gray-200:hover {
+    background-color: #d8d8d8 !important;
+  }
+
+  /* Hover states for dark mode */
+  .dark .hover\:bg-gray-50:hover {
+    background-color: #2d2d2d !important;
+  }
+
+  .dark .hover\:bg-gray-100:hover {
+    background-color: #3d3d3d !important;
+  }
+
+  .dark .hover\:bg-gray-200:hover {
+    background-color: #4d4d4d !important;
+  }
+
+  .dark .hover\:bg-gray-600:hover {
+    background-color: #3d3d3d !important;
+  }
+
+  .dark .hover\:bg-gray-700:hover {
+    background-color: #2d2d2d !important;
+  }
+
+  /* Specific component overrides */
+  .dark .bg-blue-50 {
+    background-color: #1a1a2e !important;
+  }
+
+  .dark .bg-blue-100 {
+    background-color: #16213e !important;
+  }
+
+  .dark .bg-red-50 {
+    background-color: #2e1a1a !important;
+  }
+
+  .dark .bg-red-100 {
+    background-color: #3e1616 !important;
+  }
+
+  .dark .bg-red-900\/20 {
+    background-color: rgba(127, 29, 29, 0.2) !important;
+  }
+
+  .dark .hover\:bg-red-900\/40:hover {
+    background-color: rgba(127, 29, 29, 0.4) !important;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
+  }
+  
+  .bg-gradient-primary {
+    @apply bg-gradient-to-r from-blue-500 to-purple-600;
+  }
+}

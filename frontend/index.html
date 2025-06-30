@@ -4,7 +4,39 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <title>Task Manager</title>
+    <script>
+      // Apply theme immediately to prevent flash - default to light mode
+      (function() {
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', applyTheme);
+        } else {
+          applyTheme();
+        }
+        
+        function applyTheme() {
+          const theme = localStorage.getItem('theme');
+          const root = document.documentElement;
+          const body = document.body;
+          
+          if (body) {
+            // Default to light mode unless explicitly set to dark
+            if (theme === 'dark') {
+              root.classList.add('dark');
+              root.style.setProperty('--color-scheme', 'dark');
+              body.style.backgroundColor = '#000000';
+              body.style.color = '#ffffff';
+            } else {
+              root.classList.remove('dark');
+              root.style.setProperty('--color-scheme', 'light');
+              body.style.backgroundColor = '#ffffff';
+              body.style.color = '#000000';
+            }
+          }
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
