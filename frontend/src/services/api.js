@@ -100,10 +100,26 @@ class ApiService {
   }
 
   async updateUserProfile(userData) {
-    return this.request('/users/profile', {
-      method: 'PUT',
-      body: JSON.stringify(userData),
-    });
+    // If avatar is a File, use FormData
+    if (userData.avatar && userData.avatar instanceof File) {
+      const formData = new FormData();
+      if (userData.name) formData.append('name', userData.name);
+      if (userData.bio) formData.append('bio', userData.bio);
+      formData.append('avatar', userData.avatar);
+      // Remove Content-Type so browser sets it
+      const headers = { ...this.getAuthHeaders() };
+      delete headers['Content-Type'];
+      return this.request('/users/profile', {
+        method: 'PUT',
+        headers,
+        body: formData,
+      });
+    } else {
+      return this.request('/users/profile', {
+        method: 'PUT',
+        body: JSON.stringify(userData),
+      });
+    }
   }
 
   // Notification endpoints

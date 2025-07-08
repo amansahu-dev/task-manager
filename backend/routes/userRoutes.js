@@ -8,8 +8,8 @@ const router = express.Router();
 const storage = multer.memoryStorage(); // using memory storage for base64
 const upload = multer({ storage });
 
-router.get('/me', protect, getProfile);
-router.put('/me', protect, upload.single('avatar'), updateProfile);
+router.get('/profile', protect, getProfile);
+router.put('/profile', protect, upload.single('avatar'), updateProfile);
 router.get('/', protect, getAllUsers);
 
 export default router;
