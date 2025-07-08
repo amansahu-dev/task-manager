@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FaBell, FaUserCircle, FaCog, FaSun, FaMoon, FaBars, FaTimes } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { UserContext } from "../context/UserContext";
 
 export default function Navbar() {
   const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, logout } = useContext(UserContext);
 
   const isActive = (path) => location.pathname === path;
 
@@ -83,33 +85,45 @@ export default function Navbar() {
             </Link>
 
             {/* User Menu */}
-            <Link
-              to="/profile"
-              className={`p-2 rounded-lg transition-colors ${
-                isActive('/profile')
-                  ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                  : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300'
-              }`}
-              aria-label="Profile"
-            >
-              <FaUserCircle className="w-5 h-5" />
-            </Link>
-
-            {/* Auth Buttons */}
-            <div className="flex items-center space-x-3">
-              <Link
-                to="/login"
-                className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Sign Up
-              </Link>
-            </div>
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <Link
+                  to="/profile"
+                  className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
+                    isActive('/profile')
+                      ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300'
+                  }`}
+                  aria-label="Profile"
+                >
+                  <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-base">
+                    {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <FaUserCircle className="w-6 h-6" />}
+                  </span>
+                  <span className="hidden md:inline font-medium">{user.name}</span>
+                </Link>
+                <button
+                  onClick={logout}
+                  className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg border border-transparent hover:border-red-400"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <Link
+                  to="/login"
+                  className="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -178,24 +192,42 @@ export default function Navbar() {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Profile
+                {user ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-base">
+                      {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <FaUserCircle className="w-5 h-5" />}
+                    </span>
+                    <span>{user.name}</span>
+                  </span>
+                ) : 'Profile'}
               </Link>
 
               <div className="flex flex-col space-y-2 pt-2">
-                <Link
-                  to="/login"
-                  className="px-3 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/signup"
-                  className="px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign Up
-                </Link>
+                {user ? (
+                  <button
+                    onClick={() => { setIsMenuOpen(false); logout(); }}
+                    className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg border border-transparent hover:border-red-400 text-left"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      className="px-3 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

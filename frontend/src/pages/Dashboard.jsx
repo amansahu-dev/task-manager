@@ -42,9 +42,9 @@ const priorityColors = {
 };
 
 const statusColors = {
-  "in-progress": "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200",
-  pending: "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200",
-  completed: "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200"
+  "in-progress": "bg-blue-600 dark:bg-blue-900 text-white dark:text-blue-200 border border-blue-600 dark:border-blue-700",
+  pending: "bg-yellow-500 dark:bg-yellow-900 text-white dark:text-yellow-200 border border-yellow-500 dark:border-yellow-700",
+  completed: "bg-green-600 dark:bg-green-900 text-white dark:text-green-200 border border-green-600 dark:border-green-700"
 };
 
 export default function Dashboard() {

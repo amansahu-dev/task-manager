@@ -16,20 +16,20 @@ function AppContent() {
   
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300" key={forceUpdate}>
-      <Navbar />
-      <div className="pt-20 px-4 max-w-7xl mx-auto">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/settings" element={<Settings />} />
+        <Navbar />
+        <div className="pt-20 px-4 max-w-7xl mx-auto">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/settings" element={<Settings />} />
           <Route path="/edit-task/:id" element={<EditTask />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/new-task" element={<NewTask />} />
           <Route path="/profile" element={<Profile />} />
-        </Routes>
+          </Routes>
+        </div>
       </div>
-    </div>
   );
 }
 
@@ -38,7 +38,7 @@ function App() {
     <ThemeProvider>
       <Router>
         <AppContent />
-      </Router>
+    </Router>
     </ThemeProvider>
   );
 }

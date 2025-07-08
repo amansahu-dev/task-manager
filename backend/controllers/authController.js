@@ -11,9 +11,11 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ name, email, password: hashedPassword });
     res.status(201).json({
-      _id: newUser._id,
-      name: newUser.name,
-      email: newUser.email,
+      user: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email
+      },
       token: generateToken(newUser._id)
     });
   } catch (err) {
@@ -29,9 +31,11 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
     res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email
+      },
       token: generateToken(user._id)
     });
   } catch (err) {
