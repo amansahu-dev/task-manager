@@ -1,8 +1,9 @@
 import Task from '../models/Task.js';
 import Notification from '../models/Notification.js';
-import { sendNotification } from '../socket/socketHandler.js';
-import { io } from '../socket/socketInstance.js'; // 🔌 Custom io reference
+import User from '../models/User.js';
 import chalk from 'chalk';
+import { sendNotification } from '../socket/socketHandler.js';
+import { io } from '../socket/socketInstance.js';
 
 export const getTasks = async (req, res) => {
   try {
@@ -36,7 +37,7 @@ export const getFilteredTasks = async (req, res) => {
 
 export const getAssignedTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ assignedTo: req.user.id, isDeleted: false })
+    const tasks = await Task.find({ assignedTo: req.user.email, isDeleted: false })
       .populate('user', 'name email avatar');
 
     res.status(200).json(tasks);
@@ -88,7 +89,7 @@ export const permanentlyDeleteTask = async (req, res) => {
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description, dueDate, priority, category, tags, assignedTo } = req.body;
+    const { title, description, dueDate, priority, category, tags, assignedTo, status } = req.body;
 
     const task = await Task.create({
       title,
@@ -97,18 +98,22 @@ export const createTask = async (req, res) => {
       priority,
       category,
       tags,
-      assignedTo,
+      status,
+      assignedTo: assignedTo || null, // email string
       user: req.user.id,
     });
 
-    if (assignedTo && assignedTo !== req.user.id) {
-      await Notification.create({
-        user: assignedTo,
-        message: `You have been assigned a new task: "${title}"`
-      });
-      sendNotification(io, assignedTo, `You have a new task: "${title}"`);
+    if (assignedTo && assignedTo !== req.user.email) {
+      const assignedToUser = await User.findOne({ email: assignedTo });
+      if (assignedToUser) {
+        await Notification.create({
+          user: assignedToUser._id,
+          message: `You have been assigned a new task: "${title}"`
+        });
+        sendNotification(io, assignedToUser._id, `You have a new task: "${title}"`);
+      }
     }
-    
+
     res.status(201).json(task);
   } catch (err) {
     console.error(chalk.red(err));
@@ -118,9 +123,11 @@ export const createTask = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   try {
+    const updateData = { ...req.body };
+
     const task = await Task.findOneAndUpdate(
       { _id: req.params.id, user: req.user.id, isDeleted: false },
-      req.body,
+      updateData,
       { new: true }
     );
 
@@ -147,5 +154,22 @@ export const deleteTask = async (req, res) => {
   } catch (err) {
     console.error(chalk.red(err));
     res.status(404).json({ error: 'Task Not Found' });
+  }
+};
+
+export const updateTaskStatus = async (req, res) => {
+  try {
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id, isDeleted: false },
+      { status: req.body.status },
+      { new: true }
+    );
+
+    if (!task) return res.status(404).json({ error: 'Task Not Found or Unauthorized' });
+
+    res.status(200).json({ message: 'Task status updated', task });
+  } catch (err) {
+    console.error(chalk.red(err));
+    res.status(500).json({ error: 'Server Error' });
   }
 };

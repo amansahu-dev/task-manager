@@ -8,7 +8,8 @@ import {
   getDeletedTasks,
   restoreTask,
   permanentlyDeleteTask,
-  getFilteredTasks
+  getFilteredTasks,
+  updateTaskStatus
 } from '../controllers/taskController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -23,5 +24,6 @@ router.delete('/permanent/:id', protect, permanentlyDeleteTask);
 router.post('/', protect, createTask);
 router.put('/:id', protect, updateTask);
 router.delete('/:id', protect, deleteTask);
+router.put('/:id/status', protect, updateTaskStatus);
 
 export default router;

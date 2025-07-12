@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaSave, FaCalendar, FaFlag, FaTag, FaUser, FaPlus } from "react-icons/fa";
+import ApiService from '../services/api';
 
 export default function NewTask() {
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
+  const today = new Date().toISOString().split('T')[0];
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -15,6 +17,7 @@ export default function NewTask() {
     tags: [],
     assignedTo: ""
   });
+  const [tagInput, setTagInput] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,22 +29,60 @@ export default function NewTask() {
     setTask(prev => ({ ...prev, tags }));
   };
 
+  const handleTagInputChange = (e) => {
+    setTagInput(e.target.value);
+  };
+
+  const handleTagInputKeyDown = (e) => {
+    if ((e.key === ',' || e.key === ' ' || e.key === 'Enter') && tagInput.trim()) {
+      e.preventDefault();
+      const newTag = tagInput.trim().replace(/,$/, '');
+      if (newTag && !task.tags.includes(newTag)) {
+        setTask(prev => ({ ...prev, tags: [...prev.tags, newTag] }));
+      }
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setTask(prev => ({ ...prev, tags: prev.tags.filter(tag => tag !== tagToRemove) }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    
     try {
-      // Replace with actual API call
-      console.log('Creating task:', task);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
+      const res = await ApiService.createTask(task);
+      console.log("Response for task create: ", res);
       navigate('/');
     } catch (error) {
       console.error('Error creating task:', error);
+      alert(error.message || 'Failed to create task');
     } finally {
       setSaving(false);
     }
   };
+
+  // Tag color palette (light, bright colors)
+  const tagColors = [
+    { bg: 'bg-blue-100 dark:bg-blue-400', text: 'text-blue-800 dark:text-blue-100', border: 'border-blue-200 dark:border-blue-700' },
+    { bg: 'bg-green-100 dark:bg-green-400', text: 'text-green-800 dark:text-green-100', border: 'border-green-200 dark:border-green-700' },
+    { bg: 'bg-yellow-100 dark:bg-yellow-400', text: 'text-yellow-800 dark:text-yellow-100', border: 'border-yellow-200 dark:border-yellow-700' },
+    { bg: 'bg-red-100 dark:bg-red-400', text: 'text-red-800 dark:text-red-100', border: 'border-red-200 dark:border-red-700' },
+    { bg: 'bg-purple-100 dark:bg-purple-400', text: 'text-purple-800 dark:text-purple-100', border: 'border-purple-200 dark:border-purple-700' },
+    { bg: 'bg-pink-100 dark:bg-pink-400', text: 'text-pink-800 dark:text-pink-100', border: 'border-pink-200 dark:border-pink-700' },
+    { bg: 'bg-teal-100 dark:bg-teal-400', text: 'text-teal-800 dark:text-teal-100', border: 'border-teal-200 dark:border-teal-700' },
+    { bg: 'bg-orange-100 dark:bg-orange-400', text: 'text-orange-800 dark:text-orange-100', border: 'border-orange-200 dark:border-orange-700' },
+  ];
+
+  // Hash function to assign a color index based on tag text
+  function getTagColor(tag) {
+    let hash = 0;
+    for (let i = 0; i < tag.length; i++) {
+      hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return tagColors[Math.abs(hash) % tagColors.length];
+  }
 
   return (
     <div className="py-8">
@@ -142,6 +183,7 @@ export default function NewTask() {
                   name="dueDate"
                   value={task.dueDate}
                   onChange={handleChange}
+                  min={today}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 />
               </div>
@@ -183,15 +225,30 @@ export default function NewTask() {
                   <FaTag className="inline w-4 h-4 mr-2" />
                   Tags
                 </label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {task.tags.map((tag) => {
+                    const color = getTagColor(tag);
+                    return (
+                      <span
+                        key={tag}
+                        className={`flex items-center px-3 py-1 rounded-full text-xs font-medium shadow-sm border mr-1 mb-1 ${color.bg} ${color.text} ${color.border}`}
+                      >
+                        {tag}
+                        <button type="button" onClick={() => handleRemoveTag(tag)} className="ml-1 text-blue-400 hover:text-red-600 dark:hover:text-red-400 focus:outline-none">&times;</button>
+                      </span>
+                    );
+                  })}
+                </div>
                 <input
                   type="text"
-                  value={task.tags.join(', ')}
-                  onChange={handleTagChange}
+                  value={tagInput}
+                  onChange={handleTagInputChange}
+                  onKeyDown={handleTagInputKeyDown}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  placeholder="tag1, tag2, tag3"
+                  placeholder="Type a tag and press comma, space, or enter"
                 />
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  Separate tags with commas
+                  Press comma, space, or enter to add a tag
                 </p>
               </div>
             </div>
