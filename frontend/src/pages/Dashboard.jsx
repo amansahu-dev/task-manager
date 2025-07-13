@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaPlus, FaFilter, FaSearch, FaCalendar, FaClock, FaFlag, FaCheck, FaTrash, FaEdit, FaTimes } from "react-icons/fa";
 import ApiService from '../services/api';
+import { UserContext } from "../context/UserContext";
 
 const priorityColors = {
   high: "text-red-600 dark:text-red-400",
@@ -17,6 +18,7 @@ const statusColors = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,6 +27,10 @@ export default function Dashboard() {
   const [updatingStatusId, setUpdatingStatusId] = useState(null);
 
   useEffect(() => {
+    if (!user) {
+      navigate('/');
+      return;
+    }
     const fetchTasks = async () => {
       setLoading(true);
       setError(null);
@@ -39,7 +45,7 @@ export default function Dashboard() {
       }
     };
     fetchTasks();
-  }, []);
+  }, [user, navigate]);
 
   // Calculate filtered tasks before stats
   const filteredTasks = tasks.filter(task => {

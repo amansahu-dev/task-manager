@@ -10,6 +10,7 @@ import EditTask from "./pages/EditTask";
 import Notifications from "./pages/Notifications";
 import NewTask from "./pages/NewTask";
 import Profile from "./pages/Profile";
+import Home from "./pages/Home";
 
 function AppContent() {
   const { forceUpdate } = useTheme();
@@ -19,14 +20,15 @@ function AppContent() {
         <Navbar />
         <div className="pt-20 px-4 max-w-7xl mx-auto">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/settings" element={<Settings />} />
-          <Route path="/edit-task/:id" element={<EditTask />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/new-task" element={<NewTask />} />
-          <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-task/:id" element={<EditTask />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/new-task" element={<NewTask />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </div>
       </div>

@@ -36,7 +36,7 @@ export default function Login() {
       console.log("Login Response:", res);
       if (res.token && res.user) {
         loginContext(res.user, res.token);
-        navigate("/");
+        navigate("/dashboard");
       } else {
         setError("Login failed: No token or user info received.");
       }
@@ -48,11 +48,11 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-[80vh] flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-4">
         {/* Header */}
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
+          <div className="mx-auto h-12 w-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-2">
             <span className="text-white font-bold text-lg">TM</span>
           </div>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -65,7 +65,7 @@ export default function Login() {
 
         {/* Form */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Error Message */}
             {error && (
               <div className="mb-4 text-red-600 dark:text-red-400 text-sm text-center">{error}</div>
