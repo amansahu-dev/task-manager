@@ -98,9 +98,17 @@ export default function Navbar() {
                     }`}
                     aria-label="Profile"
                   >
-                    <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-base">
-                      {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <FaUserCircle className="w-6 h-6" />}
-                    </span>
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar.startsWith("data:") ? user.avatar : `data:image/*;base64,${user.avatar}`}
+                        alt="Profile"
+                        className="w-8 h-8 rounded-full object-cover border-2 border-blue-500"
+                      />
+                    ) : (
+                      <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-base">
+                        {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <FaUserCircle className="w-6 h-6" />}
+                      </span>
+                    )}
                     <span className="hidden md:inline font-medium">{user.name}</span>
                   </Link>
                   <button
@@ -182,9 +190,17 @@ export default function Navbar() {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <span className="flex items-center gap-2">
-                      <span className="w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-base">
-                        {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <FaUserCircle className="w-5 h-5" />}
-                      </span>
+                      {user.avatar ? (
+                        <img
+                          src={user.avatar.startsWith("data:") ? user.avatar : `data:image/*;base64,${user.avatar}`}
+                          alt="Profile"
+                          className="w-7 h-7 rounded-full object-cover border-2 border-blue-500"
+                        />
+                      ) : (
+                        <span className="w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-base">
+                          {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <FaUserCircle className="w-5 h-5" />}
+                        </span>
+                      )}
                       <span>{user.name}</span>
                     </span>
                   </Link>

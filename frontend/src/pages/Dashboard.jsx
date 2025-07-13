@@ -18,7 +18,7 @@ const statusColors = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const { user, token, login } = useContext(UserContext);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,6 +46,15 @@ export default function Dashboard() {
     };
     fetchTasks();
   }, [user, navigate]);
+
+  useEffect(() => {
+    // Only fetch if user is logged in and avatar is missing
+    if (token && user && !user.avatar) {
+      ApiService.getUserProfile().then(profile => {
+        login(profile, token); // update context with full profile
+      });
+    }
+  }, [token, user, login]);
 
   // Calculate filtered tasks before stats
   const filteredTasks = tasks.filter(task => {
