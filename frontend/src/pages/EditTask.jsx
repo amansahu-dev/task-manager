@@ -108,14 +108,13 @@ export default function EditTask() {
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
-      try {
-        console.log('Deleting task:', id);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        navigate('/');
-      } catch (error) {
-        console.error('Error deleting task:', error);
-      }
+    if (!window.confirm('Are you sure you want to delete this task?')) return;
+    try {
+      await ApiService.deleteTask(id);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      alert(error.message || 'Failed to delete task');
     }
   };
 

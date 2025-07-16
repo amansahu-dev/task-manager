@@ -109,7 +109,7 @@ export default function Navbar() {
                         {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <FaUserCircle className="w-6 h-6" />}
                       </span>
                     )}
-                    <span className="hidden md:inline font-medium">{user.name}</span>
+                    <span className="hidden md:inline font-medium">{user.name.split(' ')[0]}</span>
                   </Link>
                   <button
                     onClick={() => {logout(); navigate("/");}}

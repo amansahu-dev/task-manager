@@ -1,7 +1,17 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 export default function Home() {
+  const { user, token } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && token) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, token, navigate]);
+
   return (
     <div className="min-h-[80vh] w-full flex items-center justify-center overflow-hidden">
       {/* Enhanced background gradient with radial overlay */}

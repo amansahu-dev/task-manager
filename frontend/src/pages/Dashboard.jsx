@@ -106,8 +106,14 @@ export default function Dashboard() {
     }
   };
 
-  const handleDeleteTask = (taskId) => {
-    setTasks(tasks.filter(task => task._id !== taskId && task.id !== taskId));
+  const handleDeleteTask = async (taskId) => {
+    if (!window.confirm("Are you sure you want to delete this task?")) return;
+    try {
+      await ApiService.deleteTask(taskId);
+      setTasks(tasks => tasks.filter(task => task._id !== taskId && task.id !== taskId));
+    } catch (err) {
+      alert("Failed to delete task: " + (err.message || "Unknown error"));
+    }
   };
 
   return (
@@ -116,7 +122,7 @@ export default function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Welcome back, User!
+            Welcome back, {user.name ? user.name.split(' ')[0]: <p>User</p>}!
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
             Here's what's happening with your tasks today.
