@@ -128,13 +128,22 @@ export default function Dashboard() {
             Here's what's happening with your tasks today.
           </p>
         </div>
-        <button
-          onClick={() => navigate('/new-task')}
-          className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <FaPlus className="w-4 h-4 mr-2" />
-          New Task
-        </button>
+        <div className="flex gap-3 mt-4 sm:mt-0">
+          <button
+            onClick={() => navigate('/new-task')}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <FaPlus className="w-4 h-4 mr-2" />
+            New Task
+          </button>
+          <button
+            onClick={() => navigate('/recently-deleted')}
+            className="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          >
+            <FaTrash className="w-4 h-4 mr-2" />
+            Recently Deleted
+          </button>
+        </div>
       </div>
 
       {/* Loading/Error State */}

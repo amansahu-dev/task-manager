@@ -94,6 +94,22 @@ class ApiService {
     return this.request(`/tasks/filter?${queryParams}`);
   }
 
+  async getDeletedTasks() {
+    return this.request('/tasks/deleted');
+  }
+
+  async restoreTask(taskId) {
+    return this.request(`/tasks/restore/${taskId}`, {
+      method: 'PUT',
+    });
+  }
+
+  async permanentlyDeleteTask(taskId) {
+    return this.request(`/tasks/permanent/${taskId}`, {
+      method: 'DELETE',
+    });
+  }
+
   // User endpoints
   async getUserProfile() {
     return this.request('/users/profile');
