@@ -16,7 +16,7 @@ export const registerUser = async (req, res) => {
         name: newUser.name,
         email: newUser.email
       },
-      token: generateToken(newUser._id)
+      token: generateToken(newUser)
     });
   } catch (err) {
     res.status(500).json({ message: 'Server Error' });
@@ -36,13 +36,17 @@ export const loginUser = async (req, res) => {
         name: user.name,
         email: user.email
       },
-      token: generateToken(user._id)
+      token: generateToken(user)
     });
   } catch (err) {
     res.status(500).json({ message: 'Server Error' });
   }
 };
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user._id },  // Just the user ID is enough if you fetch full user in middleware
+    process.env.JWT_SECRET,
+    { expiresIn: '30d' }
+  );
 };

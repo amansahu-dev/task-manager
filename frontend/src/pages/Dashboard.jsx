@@ -137,8 +137,15 @@ export default function Dashboard() {
             New Task
           </button>
           <button
+            onClick={() => navigate('/assigned-tasks')}
+            className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <FaFlag className="w-4 h-4 mr-2" />
+            Assigned Tasks
+          </button>
+          <button
             onClick={() => navigate('/recently-deleted')}
-            className="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <FaTrash className="w-4 h-4 mr-2" />
             Recently Deleted
@@ -213,7 +220,7 @@ export default function Dashboard() {
           {/* Tasks List */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Tasks</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">My Tasks</h2>
             </div>
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredTasks.length === 0 ? (

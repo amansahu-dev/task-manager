@@ -37,8 +37,10 @@ export const getFilteredTasks = async (req, res) => {
 
 export const getAssignedTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ assignedTo: req.user.email, isDeleted: false })
-      .populate('user', 'name email avatar');
+      const tasks = await Task.find({
+      assignedTo: req.user.email.trim().toLowerCase(),
+      isDeleted: false
+    }).populate('user', 'name email avatar'); // Only works if user is ObjectId ref
 
     res.status(200).json(tasks);
   } catch (err) {
@@ -160,7 +162,14 @@ export const deleteTask = async (req, res) => {
 export const updateTaskStatus = async (req, res) => {
   try {
     const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, user: req.user.id, isDeleted: false },
+      { 
+        _id: req.params.id, 
+        isDeleted: false,
+        $or: [
+          { user: req.user.id },
+          { assignedTo: req.user.email }
+        ]
+      },
       { status: req.body.status },
       { new: true }
     );

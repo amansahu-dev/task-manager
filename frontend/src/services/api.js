@@ -110,6 +110,13 @@ class ApiService {
     });
   }
 
+  async updateTaskStatus(taskId, status) {
+    return this.request(`/tasks/${taskId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+  }
+
   // User endpoints
   async getUserProfile() {
     return this.request('/users/profile');

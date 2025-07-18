@@ -12,6 +12,7 @@ import NewTask from "./pages/NewTask";
 import Profile from "./pages/Profile";
 import Home from "./pages/Home";
 import RecentlyDeleted from "./pages/RecentlyDeleted";
+import AssignedTasks from "./pages/AssignedTasks";
 
 function AppContent() {
   const { forceUpdate } = useTheme();
@@ -31,6 +32,7 @@ function AppContent() {
             <Route path="/new-task" element={<NewTask />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/recently-deleted" element={<RecentlyDeleted />} />
+            <Route path="/assigned-tasks" element={<AssignedTasks />} />
           </Routes>
         </div>
       </div>
