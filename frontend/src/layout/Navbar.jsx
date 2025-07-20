@@ -8,7 +8,7 @@ export default function Navbar() {
   const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const { user, logout } = useContext(UserContext);
+  const { user, logout, unreadCount } = useContext(UserContext);
   const navigate = useNavigate();
 
   const isActive = (path) => location.pathname === path;
@@ -72,9 +72,11 @@ export default function Navbar() {
                   }`}
                 >
                   <FaBell className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    3
-                  </span>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
                 </Link>
                 {/* Settings */}
                 <Link

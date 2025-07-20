@@ -33,8 +33,8 @@ export default function Login() {
         email: formData.email,
         password: formData.password
       });
-      console.log("Login Response:", res);
       if (res.token && res.user) {
+        console.log("Login Successfull");
         loginContext(res.user, res.token);
         navigate("/dashboard");
       } else {

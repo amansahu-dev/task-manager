@@ -1,6 +1,10 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import Notification from '../models/Notification.js';
+import { sendNotification } from '../socket/socketHandler.js';
+import { io } from '../socket/socketInstance.js';
+import { sendUserDailyReminder } from './notificationController.js';
 
 export const registerUser = async (req, res) => {
   try {
@@ -10,6 +14,17 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ name, email, password: hashedPassword });
+
+    // Send welcome system notification
+    const notification = await Notification.create({
+      user: newUser._id,
+      type: 'system',
+      priority: 'low',
+      title: 'Welcome to TaskManager!',
+      message: `Hi ${name}, thank you for joining TaskManager! Start by creating your first task.`
+    });
+    sendNotification(io, newUser._id, notification);
+
     res.status(201).json({
       user: {
         _id: newUser._id,
@@ -30,6 +45,8 @@ export const loginUser = async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
+    // Send daily reminder if needed
+    await sendUserDailyReminder(user._id);
     res.status(200).json({
       user: {
         _id: user._id,

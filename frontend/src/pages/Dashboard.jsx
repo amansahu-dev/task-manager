@@ -18,7 +18,7 @@ const statusColors = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, token, login } = useContext(UserContext);
+  const { user, token, login, profileFetched, setProfileFetched } = useContext(UserContext);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,7 +36,6 @@ export default function Dashboard() {
       setError(null);
       try {
         const data = await ApiService.getTasks();
-        console.log(data);
         setTasks(data);
       } catch (err) {
         setError(err.message || 'Failed to fetch tasks');
@@ -48,13 +47,16 @@ export default function Dashboard() {
   }, [user, navigate]);
 
   useEffect(() => {
-    // Only fetch if user is logged in and avatar is missing
-    if (token && user && !user.avatar) {
+    // Only fetch if user is logged in, profile hasn't been fetched, and user object is incomplete
+    if (token && user && !profileFetched) {
       ApiService.getUserProfile().then(profile => {
         login(profile, token); // update context with full profile
+        setProfileFetched(true); // Set as soon as profile is fetched
+      }).catch(() => {
+        setProfileFetched(true); // Even on error, prevent infinite loop
       });
     }
-  }, [token, user, login]);
+  }, [token, user, login, profileFetched, setProfileFetched]);
 
   // Calculate filtered tasks before stats
   const filteredTasks = tasks.filter(task => {

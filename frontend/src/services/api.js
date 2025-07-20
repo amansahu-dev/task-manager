@@ -161,6 +161,13 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  // Clear all notifications for the user
+  async clearAllNotifications() {
+    return this.request('/notifications/clear-all', {
+      method: 'DELETE',
+    });
+  }
 }
 
 export default new ApiService(); 

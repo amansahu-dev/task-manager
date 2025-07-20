@@ -1,94 +1,105 @@
-import React, { useState } from "react";
-import { FaBell, FaCheck, FaTrash, FaClock, FaExclamationTriangle, FaInfoCircle, FaUser, FaCalendar } from "react-icons/fa";
+import React, { useState, useEffect, useContext } from "react";
+import { FaBell, FaCheck, FaTrash, FaClock, FaInfoCircle, FaUser } from "react-icons/fa";
+import ApiService from '../services/api';
+import { UserContext } from '../context/UserContext';
+
+function getNotificationIcon(type) {
+  switch (type) {
+    case 'task':
+      return <FaUser className="text-blue-600 dark:text-blue-400 w-5 h-5" />;
+    case 'reminder':
+      return <FaClock className="text-yellow-600 dark:text-yellow-400 w-5 h-5" />;
+    case 'update':
+      return <FaCheck className="text-green-600 dark:text-green-400 w-5 h-5" />;
+    case 'system':
+      return <FaInfoCircle className="text-purple-600 dark:text-purple-400 w-5 h-5" />;
+    default:
+      return <FaBell className="text-gray-600 dark:text-gray-400 w-5 h-5" />;
+  }
+}
+
+function getPriorityColor(priority) {
+  switch (priority) {
+    case 'high':
+      return 'text-red-600 dark:text-red-400 font-bold';
+    case 'medium':
+      return 'text-yellow-600 dark:text-yellow-400 font-semibold';
+    case 'low':
+      return 'text-green-600 dark:text-green-400';
+    default:
+      return 'text-gray-600 dark:text-gray-400';
+  }
+}
 
 export default function Notifications() {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: "task",
-      title: "New task assigned",
-      message: "You have been assigned a new task: 'Complete project documentation'",
-      time: "2 hours ago",
-      read: false,
-      priority: "high"
-    },
-    {
-      id: 2,
-      type: "reminder",
-      title: "Task due soon",
-      message: "Task 'Review code changes' is due in 24 hours",
-      time: "4 hours ago",
-      read: false,
-      priority: "medium"
-    },
-    {
-      id: 3,
-      type: "update",
-      title: "Task completed",
-      message: "Task 'Update dependencies' has been marked as completed",
-      time: "1 day ago",
-      read: true,
-      priority: "low"
-    },
-    {
-      id: 4,
-      type: "system",
-      title: "Welcome to TaskManager",
-      message: "Thank you for joining TaskManager! Start by creating your first task.",
-      time: "2 days ago",
-      read: true,
-      priority: "low"
-    }
-  ]);
-
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
+  const { resetUnread } = useContext(UserContext);
 
-  const getIcon = (type) => {
-    switch (type) {
-      case "task":
-        return <FaUser className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
-      case "reminder":
-        return <FaClock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />;
-      case "update":
-        return <FaCheck className="w-5 h-5 text-green-600 dark:text-green-400" />;
-      case "system":
-        return <FaInfoCircle className="w-5 h-5 text-purple-600 dark:text-purple-400" />;
-      default:
-        return <FaBell className="w-5 h-5 text-gray-600 dark:text-gray-400" />;
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await ApiService.getNotifications();
+        setNotifications(data);
+      } catch (err) {
+        setError(err.message || 'Failed to fetch notifications');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotifications();
+  }, []);
+
+  // Reset unread count when visiting notifications page
+  useEffect(() => {
+    resetUnread();
+  }, [resetUnread]);
+
+  const markAsRead = async (id) => {
+    try {
+      await ApiService.markNotificationAsRead(id);
+      setNotifications(prev => prev.map(n => n._id === id ? { ...n, read: true } : n));
+    } catch (err) {
+      alert('Failed to mark as read: ' + (err.message || 'Unknown error'));
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "high":
-        return "text-red-600 dark:text-red-400";
-      case "medium":
-        return "text-yellow-600 dark:text-yellow-400";
-      case "low":
-        return "text-green-600 dark:text-green-400";
-      default:
-        return "text-gray-600 dark:text-gray-400";
+  const deleteNotification = async (id) => {
+    try {
+      await ApiService.deleteNotification(id);
+      setNotifications(prev => prev.filter(n => n._id !== id));
+    } catch (err) {
+      alert('Failed to delete notification: ' + (err.message || 'Unknown error'));
     }
   };
 
-  const markAsRead = (id) => {
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === id 
-          ? { ...notification, read: true }
-          : notification
-      )
-    );
+  const markAllAsRead = async () => {
+    try {
+      await Promise.all(
+        notifications.filter(n => !n.read).map(n => ApiService.markNotificationAsRead(n._id))
+      );
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    } catch (err) {
+      alert('Failed to mark all as read: ' + (err.message || 'Unknown error'));
+    }
   };
 
-  const deleteNotification = (id) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(prev => 
-      prev.map(notification => ({ ...notification, read: true }))
-    );
+  // Clear all notifications
+  const clearAll = async () => {
+    if (!window.confirm('Are you sure you want to clear all notifications? This cannot be undone.')) return;
+    try {
+      setLoading(true);
+      await ApiService.clearAllNotifications();
+      setNotifications([]);
+    } catch (err) {
+      setError('Failed to clear notifications: ' + (err.message || 'Unknown error'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filteredNotifications = notifications.filter(notification => {
@@ -111,12 +122,22 @@ export default function Notifications() {
               {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
             </p>
           </div>
-          <button
-            onClick={markAllAsRead}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Mark all as read
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={markAllAsRead}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60"
+              disabled={loading || notifications.length === 0}
+            >
+              Mark all as read
+            </button>
+            <button
+              onClick={clearAll}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60"
+              disabled={loading || notifications.length === 0}
+            >
+              Clear All
+            </button>
+          </div>
         </div>
 
         {/* Filters */}
@@ -141,7 +162,15 @@ export default function Notifications() {
 
         {/* Notifications List */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          {filteredNotifications.length === 0 ? (
+          {loading ? (
+            <div className="p-8 text-center">
+              <span className="text-lg text-gray-600 dark:text-gray-300">Loading notifications...</span>
+            </div>
+          ) : error ? (
+            <div className="p-8 text-center">
+              <span className="text-lg text-red-600 dark:text-red-400">{error}</span>
+            </div>
+          ) : filteredNotifications.length === 0 ? (
             <div className="p-8 text-center">
               <FaBell className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
@@ -158,60 +187,62 @@ export default function Notifications() {
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredNotifications.map((notification) => (
                 <div
-                  key={notification.id}
-                  className={`p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
+                  key={notification._id}
+                  className={`p-6 flex items-start gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
                     !notification.read ? 'bg-blue-50 dark:bg-blue-900/10' : ''
                   }`}
                 >
-                  <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0 mt-1">
-                      {getIcon(notification.type)}
+                  {/* Icon */}
+                  <div className="flex-shrink-0 mt-1">
+                    {getNotificationIcon(notification.type)}
+                  </div>
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className={`text-sm font-medium ${!notification.read ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>
+                        {notification.title || 'Notification'}
+                      </h3>
+                      {notification.priority && (
+                        <span className={`ml-2 text-xs px-2 py-0.5 rounded-full border ${getPriorityColor(notification.priority)} border-current bg-gray-100 dark:bg-gray-700/50`}>
+                          {notification.priority.toUpperCase()}
+                        </span>
+                      )}
+                      {notification.type && (
+                        <span className={`ml-2 text-xs px-2 py-0.5 rounded-full border border-current bg-gray-50 dark:bg-gray-800/50 ${
+                          notification.type === 'system' ? 'text-purple-600 border-purple-600' :
+                          notification.type === 'task' ? 'text-blue-600 border-blue-600' :
+                          notification.type === 'reminder' ? 'text-yellow-600 border-yellow-600' :
+                          notification.type === 'update' ? 'text-green-600 border-green-600' :
+                          'text-gray-600 border-gray-600'
+                        }`}>
+                          {notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}
+                        </span>
+                      )}
+                      {!notification.read && (
+                        <span className="ml-2 w-2 h-2 bg-blue-600 rounded-full inline-block"></span>
+                      )}
                     </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <h3 className={`text-sm font-medium ${
-                            !notification.read 
-                              ? 'text-gray-900 dark:text-white' 
-                              : 'text-gray-700 dark:text-gray-300'
-                          }`}>
-                            {notification.title}
-                          </h3>
-                          {!notification.read && (
-                            <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                          )}
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className={`text-xs font-medium ${getPriorityColor(notification.priority)}`}>
-                            {notification.priority}
-                          </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {notification.time}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        {notification.message}
-                      </p>
-                      
-                      <div className="flex items-center space-x-3 mt-3">
-                        {!notification.read && (
-                          <button
-                            onClick={() => markAsRead(notification.id)}
-                            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                          >
-                            Mark as read
-                          </button>
-                        )}
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {notification.message}
+                    </div>
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {notification.createdAt ? new Date(notification.createdAt).toLocaleString() : ''}
+                      </span>
+                      {!notification.read && (
                         <button
-                          onClick={() => deleteNotification(notification.id)}
-                          className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                          onClick={() => markAsRead(notification._id)}
+                          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                         >
-                          Delete
+                          Mark as read
                         </button>
-                      </div>
+                      )}
+                      <button
+                        onClick={() => deleteNotification(notification._id)}
+                        className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 </div>

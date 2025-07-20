@@ -108,11 +108,14 @@ export const createTask = async (req, res) => {
     if (assignedTo && assignedTo !== req.user.email) {
       const assignedToUser = await User.findOne({ email: assignedTo });
       if (assignedToUser) {
-        await Notification.create({
+        const notification = await Notification.create({
           user: assignedToUser._id,
+          type: 'task',
+          priority: priority || 'medium',
+          title: 'New Task Assigned',
           message: `You have been assigned a new task: "${title}"`
         });
-        sendNotification(io, assignedToUser._id, `You have a new task: "${title}"`);
+        sendNotification(io, assignedToUser._id, notification);
       }
     }
 
@@ -134,6 +137,21 @@ export const updateTask = async (req, res) => {
     );
 
     if (!task) return res.status(404).json({ error: 'Task Not Found or Unauthorized' });
+
+    // Send update notification if assigned
+    if (task.assignedTo && task.assignedTo !== req.user.email) {
+      const assignedToUser = await User.findOne({ email: task.assignedTo });
+      if (assignedToUser) {
+        const notification = await Notification.create({
+          user: assignedToUser._id,
+          type: 'update',
+          priority: task.priority || 'medium',
+          title: 'Task Updated',
+          message: `Task "${task.title}" assigned to you has been updated.`
+        });
+        sendNotification(io, assignedToUser._id, notification);
+      }
+    }
 
     res.status(200).json(task);
   } catch (err) {
@@ -175,6 +193,22 @@ export const updateTaskStatus = async (req, res) => {
     );
 
     if (!task) return res.status(404).json({ error: 'Task Not Found or Unauthorized' });
+
+    // If the status is updated by the assigned user (not the creator), send a notification to the creator
+    if (task.assignedTo && task.assignedTo === req.user.email && String(task.user) !== String(req.user.id)) {
+      // Find the creator
+      const creator = await User.findById(task.user);
+      if (creator) {
+        const notification = await Notification.create({
+          user: creator._id,
+          type: 'update',
+          priority: task.priority || 'medium',
+          title: 'Task Status Updated',
+          message: `Task "${task.title}" assigned to ${task.assignedTo} was updated to status: ${req.body.status}`
+        });
+        sendNotification(io, creator._id, notification);
+      }
+    }
 
     res.status(200).json({ message: 'Task status updated', task });
   } catch (err) {
