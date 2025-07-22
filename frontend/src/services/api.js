@@ -159,6 +159,17 @@ class ApiService {
     }
   }
 
+  // User settings endpoints
+  async getUserSettings() {
+    return this.request('/user-settings');
+  }
+  async updateUserSettings(settings) {
+    return this.request('/user-settings', {
+      method: 'PUT',
+      body: JSON.stringify(settings),
+    });
+  }
+
   // Notification endpoints
   async getNotifications() {
     return this.request('/notifications');
@@ -181,6 +192,44 @@ class ApiService {
     return this.request('/notifications/clear-all', {
       method: 'DELETE',
     });
+  }
+
+  // Export user data as JSON (returns Blob)
+  async exportUserData() {
+    const url = `${this.baseURL}/users/export`;
+    const config = {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+    };
+    const response = await fetch(url, config);
+    if (!response.ok) {
+      throw new Error('Failed to export user data');
+    }
+    return await response.blob();
+  }
+  // Delete user account
+  async deleteUserAccount() {
+    return this.request('/users/delete', { method: 'DELETE' });
+  }
+
+  // Import user data from JSON file
+  async importUserData(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const url = `${this.baseURL}/users/import`;
+    const token = localStorage.getItem('token');
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Failed to import user data');
+    }
+    return await response.json();
   }
 }
 

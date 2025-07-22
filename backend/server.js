@@ -9,6 +9,7 @@ import taskRoutes from './routes/taskRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import userSettingsRoutes from './routes/userSettingsRoutes.js';
 import { initSocket } from './socket/socketInstance.js';
 import { configureSocket } from './socket/socketHandler.js';
 import { sendDailyReminders } from './controllers/notificationController.js';
@@ -37,6 +38,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/user-settings', userSettingsRoutes);
 
 // Schedule daily reminders at 9am
 cron.schedule('0 9 * * *', () => {
