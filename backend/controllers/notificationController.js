@@ -1,6 +1,7 @@
 import Notification from '../models/Notification.js';
 import Task from '../models/Task.js';
 import User from '../models/User.js';
+import UserSettings from '../models/UserSettings.js';
 import chalk from 'chalk';
 import { sendNotification } from '../socket/socketHandler.js';
 import { io } from '../socket/socketInstance.js';
@@ -94,6 +95,9 @@ export const sendDailyReminders = async (req, res) => {
 
     // Send a reminder notification to each user
     for (const [userId, tasks] of Object.entries(userTasks)) {
+      // Check userSettings for dailyReminders
+      const settings = await UserSettings.findOne({ user: userId });
+      if (settings && settings.notifications && settings.notifications.dailyReminders === false) continue;
       const message = `You have ${tasks.length} task(s) due today or overdue. Please check your tasks.`;
       const notification = await Notification.create({
         user: userId,
@@ -126,6 +130,9 @@ export const sendUserDailyReminder = async (userId) => {
     status: { $ne: 'completed' },
     isDeleted: false
   });
+  // Check userSettings for dailyReminders
+  const settings = await UserSettings.findOne({ user: userId });
+  if (settings && settings.notifications && settings.notifications.dailyReminders === false) return;
   if (tasks.length > 0) {
     const message = `You have ${tasks.length} task(s) due today or overdue. Please check your tasks.`;
     const notification = await Notification.create({

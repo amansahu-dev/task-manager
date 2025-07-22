@@ -15,8 +15,8 @@ export default function Home() {
   return (
     <div className="min-h-[80vh] w-full flex items-center justify-center overflow-hidden">
       {/* Enhanced background gradient with radial overlay */}
-      <div className="absolute inset-0 w-full h-full z-0 bg-gradient-to-br from-blue-200 via-purple-200 via-pink-200 to-yellow-100" />
-      <div className="absolute inset-0 w-full h-full z-0 pointer-events-none" style={{background: "radial-gradient(ellipse at 70% 30%, rgba(186,230,253,0.4) 0%, rgba(236, 72, 153, 0.15) 60%, transparent 100%)"}} />
+      <div className="absolute inset-0 w-full h-dvh z-0 bg-gradient-to-br from-blue-200 via-purple-200 via-pink-200 to-yellow-100" />
+      <div className="absolute inset-0 w-full h-lvh z-0 pointer-events-none" style={{background: "radial-gradient(ellipse at 70% 30%, rgba(186,230,253,0.4) 0%, rgba(236, 72, 153, 0.15) 60%, transparent 100%)"}} />
       <div className="relative z-10 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 max-w-md w-full flex flex-col items-center">
         <div className="w-12 h-12 mb-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
           <span className="text-white font-bold text-lg">TM</span>

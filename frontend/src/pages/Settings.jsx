@@ -591,12 +591,12 @@ export default function Settings() {
         {importError && <div className="text-red-600 dark:text-red-400 text-sm mb-4">{importError}</div>}
         {importSuccess && <div className="text-green-600 dark:text-green-400 text-sm mb-4">{importSuccess}</div>}
         <div className="space-y-4">
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <div className="p-4 bg-white dark:bg-blue-900/20 border border-blue-400 dark:border-blue-800 rounded-lg">
             <div className="flex items-start">
               <FaDownload className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 mr-3" />
               <div className="w-full">
-                <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100">Export Your Data</h4>
-                <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-700">Export Your Data</h4>
+                <p className="text-sm text-blue-700 dark:text-blue-500 mt-1">
                   Download all your tasks, notifications, settings, and profile in JSON format
                 </p>
                 <button
@@ -624,16 +624,16 @@ export default function Settings() {
                     {importLoading ? 'Importing...' : 'Import Data'}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Import will overwrite your current data. Only JSON files exported from this app are supported.</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">Import will overwrite your current data. Only JSON files exported from this app are supported.</p>
               </div>
             </div>
           </div>
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <div className="p-4 bg-white dark:bg-red-900/20 border border-red-400 dark:border-red-800 rounded-lg">
             <div className="flex items-start">
               <FaTrash className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 mr-3" />
               <div>
-                <h4 className="text-sm font-medium text-red-900 dark:text-red-100">Delete Account</h4>
-                <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                <h4 className="text-sm font-semibold text-red-900 dark:text-red-700">Delete Account</h4>
+                <p className="text-sm text-red-700 dark:text-red-500 mt-1">
                   Permanently delete your account and all associated data. This action cannot be undone.
                 </p>
                 <button

@@ -1,6 +1,7 @@
 import Task from '../models/Task.js';
 import Notification from '../models/Notification.js';
 import User from '../models/User.js';
+import UserSettings from '../models/UserSettings.js';
 import chalk from 'chalk';
 import { sendNotification } from '../socket/socketHandler.js';
 import { io } from '../socket/socketInstance.js';
@@ -108,14 +109,18 @@ export const createTask = async (req, res) => {
     if (assignedTo && assignedTo !== req.user.email) {
       const assignedToUser = await User.findOne({ email: assignedTo });
       if (assignedToUser) {
-        const notification = await Notification.create({
-          user: assignedToUser._id,
-          type: 'task',
-          priority: priority || 'medium',
-          title: 'New Task Assigned',
-          message: `You have been assigned a new task: "${title}"`
-        });
-        sendNotification(io, assignedToUser._id, notification);
+        // Check userSettings for general notifications
+        const settings = await UserSettings.findOne({ user: assignedToUser._id });
+        if (!settings || settings.notifications.general !== false) {
+          const notification = await Notification.create({
+            user: assignedToUser._id,
+            type: 'task',
+            priority: priority || 'medium',
+            title: 'New Task Assigned',
+            message: `You have been assigned a new task: "${title}"`
+          });
+          sendNotification(io, assignedToUser._id, notification);
+        }
       }
     }
 
@@ -142,14 +147,18 @@ export const updateTask = async (req, res) => {
     if (task.assignedTo && task.assignedTo !== req.user.email) {
       const assignedToUser = await User.findOne({ email: task.assignedTo });
       if (assignedToUser) {
-        const notification = await Notification.create({
-          user: assignedToUser._id,
-          type: 'update',
-          priority: task.priority || 'medium',
-          title: 'Task Updated',
-          message: `Task "${task.title}" assigned to you has been updated.`
-        });
-        sendNotification(io, assignedToUser._id, notification);
+        // Check userSettings for general notifications
+        const settings = await UserSettings.findOne({ user: assignedToUser._id });
+        if (!settings || settings.notifications.general !== false) {
+          const notification = await Notification.create({
+            user: assignedToUser._id,
+            type: 'update',
+            priority: task.priority || 'medium',
+            title: 'Task Updated',
+            message: `Task "${task.title}" assigned to you has been updated.`
+          });
+          sendNotification(io, assignedToUser._id, notification);
+        }
       }
     }
 
@@ -199,14 +208,18 @@ export const updateTaskStatus = async (req, res) => {
       // Find the creator
       const creator = await User.findById(task.user);
       if (creator) {
-        const notification = await Notification.create({
-          user: creator._id,
-          type: 'update',
-          priority: task.priority || 'medium',
-          title: 'Task Status Updated',
-          message: `Task "${task.title}" assigned to ${task.assignedTo} was updated to status: ${req.body.status}`
-        });
-        sendNotification(io, creator._id, notification);
+        // Check userSettings for general notifications
+        const settings = await UserSettings.findOne({ user: creator._id });
+        if (!settings || settings.notifications.general !== false) {
+          const notification = await Notification.create({
+            user: creator._id,
+            type: 'update',
+            priority: task.priority || 'medium',
+            title: 'Task Status Updated',
+            message: `Task "${task.title}" assigned to ${task.assignedTo} was updated to status: ${req.body.status}`
+          });
+          sendNotification(io, creator._id, notification);
+        }
       }
     }
 
