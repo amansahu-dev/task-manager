@@ -122,22 +122,23 @@ export default function Notifications() {
               {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
             </p>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={markAllAsRead}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60"
-              disabled={loading || notifications.length === 0}
-            >
-              Mark all as read
-            </button>
-            <button
-              onClick={clearAll}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60"
-              disabled={loading || notifications.length === 0}
-            >
-              Clear All
-            </button>
-          </div>
+        </div>
+        {/* Action Buttons Row */}
+        <div className="flex flex-col gap-2 w-full max-w-xs sm:flex-row sm:max-w-none sm:w-auto sm:gap-2 mt-2 mb-8">
+          <button
+            onClick={markAllAsRead}
+            className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60"
+            disabled={loading || notifications.length === 0}
+          >
+            Mark all as read
+          </button>
+          <button
+            onClick={clearAll}
+            className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60"
+            disabled={loading || notifications.length === 0}
+          >
+            Clear All
+          </button>
         </div>
 
         {/* Filters */}

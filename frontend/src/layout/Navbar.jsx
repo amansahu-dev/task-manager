@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { FaBell, FaUserCircle, FaCog, FaSun, FaMoon, FaBars, FaTimes, FaHome } from "react-icons/fa";
+import { FaBell, FaUserCircle, FaCog, FaSun, FaMoon, FaBars, FaTimes, FaHome, FaSignOutAlt } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { UserContext } from "../context/UserContext";
@@ -37,10 +37,10 @@ export default function Navbar() {
             {user && (
               <Link
                 to="/dashboard"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive('/dashboard') 
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                    : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                className={`p-2 rounded-lg transition-colors ${
+                  isActive('/dashboard')
+                    ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300'
                 }`}
                 aria-label="Home"
               >
@@ -144,73 +144,76 @@ export default function Navbar() {
           <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex flex-col space-y-3">
               {user && (
-                <Link
-                  to="/dashboard"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive('/dashboard') 
-                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                      : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Dashboard
-                </Link>
-              )}
-              <div className="flex items-center justify-between px-3 py-2">
-                <span className="text-sm text-gray-700 dark:text-gray-300">Theme</span>
-                <button
-                  onClick={handleThemeToggle}
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  {isDark ? (
-                    <FaSun className="w-4 h-4 text-yellow-500" />
-                  ) : (
-                    <FaMoon className="w-4 h-4 text-gray-600" />
-                  )}
-                </button>
-              </div>
-              {user && (
                 <>
                   <Link
+                    to="/dashboard"
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive('/dashboard') 
+                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                        : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <FaHome className="w-5 h-5" />
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/notifications"
+                    className={`relative px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2 transition-colors ${
+                      isActive('/notifications')
+                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                        : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <FaBell className="w-5 h-5" />
+                    Notifications
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </Link>
+                  <Link
                     to="/settings"
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive('/settings')
                         ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
                         : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
+                    <FaCog className="w-5 h-5" />
                     Settings
                   </Link>
                   <Link
                     to="/profile"
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive('/profile')
                         ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
                         : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span className="flex items-center gap-2">
-                      {user.avatar ? (
-                        <img
-                          src={user.avatar.startsWith("data:") ? user.avatar : `data:image/*;base64,${user.avatar}`}
-                          alt="Profile"
-                          className="w-7 h-7 rounded-full object-cover border-2 border-blue-500"
-                        />
-                      ) : (
-                        <span className="w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-base">
-                          {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <FaUserCircle className="w-5 h-5" />}
-                        </span>
-                      )}
-                      <span>{user.name}</span>
-                    </span>
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar.startsWith("data:") ? user.avatar : `data:image/*;base64,${user.avatar}`}
+                        alt="Profile"
+                        className="w-7 h-7 rounded-full object-cover border-2 border-blue-500"
+                      />
+                    ) : (
+                      <span className="w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-base">
+                        {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : <FaUserCircle className="w-5 h-5" />}
+                      </span>
+                    )}
+                    {user.name}
                   </Link>
                   <div className="flex flex-col space-y-2 pt-2">
                     <button
                       onClick={() => { setIsMenuOpen(false); logout(); navigate("/"); }}
-                      className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg border border-transparent hover:border-red-400 text-left"
+                      className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-lg border border-transparent hover:border-red-400 text-left"
                     >
+                      <FaSignOutAlt className="w-5 h-5" />
                       Logout
                     </button>
                   </div>

@@ -216,3 +216,28 @@ export const updateTaskStatus = async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 };
+
+// Restore all deleted tasks for the user
+export const restoreAllDeletedTasks = async (req, res) => {
+  try {
+    const result = await Task.updateMany(
+      { user: req.user.id, isDeleted: true },
+      { isDeleted: false }
+    );
+    res.status(200).json({ message: 'All deleted tasks restored', count: result.modifiedCount });
+  } catch (err) {
+    console.error(chalk.red(err));
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+// Permanently delete all deleted tasks for the user
+export const permanentlyDeleteAllDeletedTasks = async (req, res) => {
+  try {
+    const result = await Task.deleteMany({ user: req.user.id, isDeleted: true });
+    res.status(200).json({ message: 'All deleted tasks permanently deleted', count: result.deletedCount });
+  } catch (err) {
+    console.error(chalk.red(err));
+    res.status(500).json({ error: 'Server Error' });
+  }
+};

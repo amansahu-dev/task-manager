@@ -130,27 +130,27 @@ export default function Dashboard() {
             Here's what's happening with your tasks today.
           </p>
         </div>
-        <div className="flex gap-3 mt-4 sm:mt-0">
+        <div className="flex flex-col gap-3 mt-6 sm:mt-0 sm:flex-row sm:gap-4 w-full max-w-lg">
           <button
             onClick={() => navigate('/new-task')}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto justify-center"
           >
-            <FaPlus className="w-4 h-4 mr-2" />
-            New Task
+            <FaPlus className="w-5 h-5" />
+            <span className="font-semibold text-base">New Task</span>
           </button>
           <button
             onClick={() => navigate('/assigned-tasks')}
-            className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto justify-center"
           >
-            <FaFlag className="w-4 h-4 mr-2" />
-            Assigned Tasks
+            <FaFlag className="w-5 h-5" />
+            <span className="font-semibold text-base">Assigned Tasks</span>
           </button>
           <button
             onClick={() => navigate('/recently-deleted')}
-            className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-auto justify-center"
           >
-            <FaTrash className="w-4 h-4 mr-2" />
-            Recently Deleted
+            <FaTrash className="w-5 h-5" />
+            <span className="font-semibold text-base">Recently Deleted</span>
           </button>
         </div>
       </div>
@@ -190,30 +190,32 @@ export default function Dashboard() {
 
           {/* Filters and Search */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-              <div className="flex items-center space-x-4">
-                <div className="relative">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-3 w-full sm:flex-row sm:items-center sm:gap-4">
+                <div className="relative w-full sm:w-64">
                   <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
                     placeholder="Search tasks..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full"
                   />
                 </div>
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="completed">Completed</option>
-                </select>
+                <div className="w-full sm:w-48">
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-600 dark:text-gray-400 w-full sm:w-auto text-right">
                 {filteredTasks.length} of {tasks.length} tasks
               </div>
             </div>
@@ -277,18 +279,47 @@ export default function Dashboard() {
                             ))}
                           </div>
                         )}
+                        {/* Actions row for mobile */}
+                        <div className="flex flex-row gap-2 mt-4 sm:hidden">
+                          <select
+                            value={task.status}
+                            onChange={(e) => handleStatusChange(task._id || task.id, e.target.value)}
+                            className="w-full px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            disabled={updatingStatusId === (task._id || task.id)}
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                          </select>
+                          <Link
+                            to={`/edit-task/${task._id || task.id}`}
+                            state={task}
+                            className="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
+                          >
+                            <FaEdit className="w-4 h-4" />
+                          </Link>
+                          <button 
+                            onClick={() => handleDeleteTask(task._id || task.id)}
+                            className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors cursor-pointer"
+                          >
+                            <FaTrash className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-2 ml-4">
-                        <select
-                          value={task.status}
-                          onChange={(e) => handleStatusChange(task._id || task.id, e.target.value)}
-                          className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          disabled={updatingStatusId === (task._id || task.id)}
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="in-progress">In Progress</option>
-                          <option value="completed">Completed</option>
-                        </select>
+                      {/* Actions row for desktop */}
+                      <div className="hidden sm:flex flex-col gap-2 sm:mt-0 sm:flex-row sm:items-center sm:space-x-2 sm:ml-4 min-w-0">
+                        <div className="w-32 min-w-0">
+                          <select
+                            value={task.status}
+                            onChange={(e) => handleStatusChange(task._id || task.id, e.target.value)}
+                            className="w-full px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            disabled={updatingStatusId === (task._id || task.id)}
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                          </select>
+                        </div>
                         <Link
                           to={`/edit-task/${task._id || task.id}`}
                           state={task}

@@ -110,6 +110,20 @@ class ApiService {
     });
   }
 
+  // Restore all deleted tasks
+  async restoreAllDeletedTasks() {
+    return this.request('/tasks/restore-all', {
+      method: 'PUT',
+    });
+  }
+
+  // Permanently delete all deleted tasks
+  async permanentlyDeleteAllDeletedTasks() {
+    return this.request('/tasks/permanent-all', {
+      method: 'DELETE',
+    });
+  }
+
   async updateTaskStatus(taskId, status) {
     return this.request(`/tasks/${taskId}/status`, {
       method: 'PUT',

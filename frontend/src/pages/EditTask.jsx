@@ -288,31 +288,32 @@ export default function EditTask() {
             </div>
 
             <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2"
-              >
-                <FaTrash className="w-4 h-4" />
-                <span>Delete Task</span>
-              </button>
-
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-col gap-3 w-full sm:flex-row sm:items-center sm:justify-between pt-0">
                 <button
                   type="button"
-                  onClick={() => navigate('/')}
-                  className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  onClick={handleDelete}
+                  className="w-full sm:w-auto px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2"
                 >
-                  Cancel
+                  <FaTrash className="w-4 h-4" />
+                  <span>Delete Task</span>
                 </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 disabled:opacity-50"
-                >
-                  <FaSave className="w-4 h-4" />
-                  <span>{saving ? 'Saving...' : 'Save Changes'}</span>
-                </button>
+                <div className="flex flex-col gap-3 w-full sm:flex-row sm:items-center sm:justify-end sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/')} 
+                    className="w-full sm:w-auto px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
+                  >
+                    <FaSave className="w-4 h-4" />
+                    <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+                  </button>
+                </div>
               </div>
             </div>
           </form>

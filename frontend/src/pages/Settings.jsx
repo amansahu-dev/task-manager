@@ -319,21 +319,21 @@ export default function Settings() {
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           {/* Tabs */}
-          <div className="border-b border-gray-200 dark:border-gray-700">
-            <nav className="flex space-x-8 px-6" aria-label="Tabs">
+          <div className="bg-gray-50 dark:bg-gray-900/40 px-2 sm:px-6 pt-4 pb-2 rounded-t-xl shadow-sm">
+            <nav className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full" aria-label="Tabs">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
+                    className={`w-full sm:w-auto px-5 py-2 rounded-full flex items-center justify-center gap-2 font-semibold text-base shadow-sm transition-all duration-200 border-2 ${
                       activeTab === tab.id
-                        ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                        : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600"
+                        ? "bg-blue-600 text-white border-blue-600 shadow-md"
+                        : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600"
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-5 w-5" />
                     <span>{tab.label}</span>
                   </button>
                 );
@@ -342,29 +342,31 @@ export default function Settings() {
           </div>
 
           {/* Tab Content */}
-          <div className="p-6">
-            {renderTabContent()}
-            
-            {/* Save Button */}
-            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  onClick={() => {
-                    setFormData(initialFormData);
-                    navigate("/");
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
-                >
-                  <FaSave className="h-4 w-4" />
-                  <span>Save Changes</span>
-                </button>
+          <div className="p-6 sm:p-8">
+            <div className="max-w-2xl mx-auto">
+              {renderTabContent()}
+              {/* Save Button */}
+              <div className="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col gap-3 w-full sm:flex-row sm:justify-end sm:items-center sm:space-x-3">
+                  <button
+                    type="button"
+                    className="w-full sm:w-auto px-5 py-3 border border-red-300 text-red-600 dark:border-red-500 dark:text-red-400 bg-white dark:bg-gray-800 rounded-full font-semibold hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors shadow-sm flex items-center justify-center gap-2"
+                    onClick={() => {
+                      setFormData(initialFormData);
+                      navigate("/");
+                    }}
+                  >
+                    <FaTimes className="h-4 w-4" />
+                    <span>Cancel</span>
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    className="w-full sm:w-auto px-5 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 shadow-md"
+                  >
+                    <FaSave className="h-4 w-4 mr-2" />
+                    <span>Save Changes</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -69,6 +69,47 @@ export default function RecentlyDeleted() {
           </button>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recently Deleted Tasks</h1>
         </div>
+        {/* Action Buttons Row */}
+        <div className="flex flex-col gap-2 w-full max-w-xs sm:flex-row sm:max-w-none sm:w-auto sm:gap-2 mt-2 mb-8">
+          <button
+            onClick={async () => {
+              if (!tasks.length) return;
+              if (!window.confirm('Restore all deleted tasks?')) return;
+              setLoading(true);
+              try {
+                await ApiService.restoreAllDeletedTasks();
+                setTasks([]);
+              } catch (err) {
+                setError('Failed to restore all: ' + (err.message || 'Unknown error'));
+              } finally {
+                setLoading(false);
+              }
+            }}
+            className="w-full sm:w-auto px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+            disabled={loading || tasks.length === 0}
+          >
+            Restore All
+          </button>
+          <button
+            onClick={async () => {
+              if (!tasks.length) return;
+              if (!window.confirm('Permanently delete all deleted tasks? This cannot be undone.')) return;
+              setLoading(true);
+              try {
+                await ApiService.permanentlyDeleteAllDeletedTasks();
+                setTasks([]);
+              } catch (err) {
+                setError('Failed to delete all: ' + (err.message || 'Unknown error'));
+              } finally {
+                setLoading(false);
+              }
+            }}
+            className="w-full sm:w-auto px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+            disabled={loading || tasks.length === 0}
+          >
+            Delete All
+          </button>
+        </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
           {loading ? (
             <div className="p-8 text-center text-gray-600 dark:text-gray-300">Loading...</div>

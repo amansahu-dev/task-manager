@@ -107,9 +107,10 @@ export default function AssignedTasks() {
                     </div>
                   </div>
                   {/* Right: User info and status dropdown */}
-                  <div className="flex flex-col items-end min-w-[220px] md:pl-8 mt-6 md:mt-0">
+                  <div className="flex flex-col md:items-end md:pl-8 mt-6 md:mt-0 w-full md:w-auto">
+                    {/* User info row */}
                     {task.user && (
-                      <div className="flex items-center space-x-3 mb-3">
+                      <div className="flex flex-row items-center gap-3 w-full md:justify-end">
                         {task.user.avatar ? (
                           <img
                             src={task.user.avatar.startsWith('data:') ? task.user.avatar : `data:image/jpeg;base64,${task.user.avatar}`}
@@ -123,14 +124,15 @@ export default function AssignedTasks() {
                               : (task.user.email ? task.user.email[0].toUpperCase() : '?')}
                           </div>
                         )}
-                        <div className="text-right">
+                        <div className="flex flex-col">
                           <div className="text-sm font-semibold text-gray-900 dark:text-white">{task.user.name || 'Unknown'}</div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">{task.user.email}</div>
                         </div>
                       </div>
                     )}
-                    <div className="w-full flex flex-col items-end">
-                      <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">Update Status:</label>
+                    {/* Status dropdown row */}
+                    <div className="flex items-center gap-2 w-full md:w-auto mt-3 md:justify-end">
+                      <label className="text-xs text-gray-500 dark:text-gray-400">Update Status:</label>
                       <select
                         value={task.status}
                         onChange={async (e) => {
