@@ -25,7 +25,15 @@ const io = initSocket(server);
 configureSocket(io);
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173', // Vite default
+  'http://localhost:3000', // Create React App default
+  'https://task-manager-pro-plus.vercel.app', // Your deployed frontend
+];
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 
 // Connect to DB
