@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://task-manager-7g3d.onrender.com';
+const API_BASE_URL = 'https://task-manager-7g3d.onrender.com/api';
 
 class ApiService {
   constructor() {
